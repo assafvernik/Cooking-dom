@@ -1,461 +1,485 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cooking Dom - גרסת השף המקצועי</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #b8c6db 100%);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            user-select: none;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cooking Made Cozy - Advanced</title>
+  <style>
+    :root {
+      --bg-color: #f7ebe1;
+      --panel-color: #fffaf5;
+      --accent-color: #ffb5a7;
+      --text-color: #6d5951;
+      --pan-color: #4a4e69;
+    }
 
-        #game-container {
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            padding: 25px;
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+    }
 
-        h1 { color: #ff4757; margin-top: 0; font-size: 2.2rem; }
-        h2 { color: #2f3542; margin-top: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 10px;
+    }
 
-        .stats-bar {
-            display: flex;
-            justify-content: space-around;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            background: #f1f2f6;
-            padding: 12px;
-            border-radius: 12px;
-        }
+    /* קונטיינר ראשי המדמה מסך טאבלט/מובייל נקי */
+    .game-card {
+      background: var(--panel-color);
+      width: 100%;
+      max-width: 430px;
+      height: 92vh;
+      max-height: 850px;
+      border-radius: 32px;
+      box-shadow: 0 20px 40px rgba(109, 89, 81, 0.15);
+      border: 6px solid #fff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
 
-        #timer { color: #ff4757; }
-        #score { color: #ffa502; }
-        #day-counter { color: #1e90ff; }
+    /* שורת מצב עליונה (קפיברה, לבבות, ניקוד) */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.5);
+      border-bottom: 2px dashed #f0e1d5;
+    }
 
-        /* מד סבלנות של הלקוח */
-        .patience-container {
-            width: 100%;
-            background-color: #eee;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            border: 1px solid #ccc;
-        }
+    .profile-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .patience-bar {
-            height: 15px;
-            width: 100%;
-            background-color: #2ed573;
-            transition: width 1s linear, background-color 0.5s;
-        }
+    .avatar {
+      font-size: 2.5rem;
+      background: #fcd5ce;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
 
-        .order-card {
-            background: #ffeaa7;
-            border: 3px dashed #fdcb6e;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-            position: relative;
-        }
+    .stats {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
-        .order-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 8px; }
-        .recipe-preview { font-size: 1.2rem; color: #2d3436; letter-spacing: 2px; }
+    .hearts {
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
 
-        .kitchen-station {
-            background: #dfe4ea;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-            min-height: 70px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            font-size: 2.2rem;
-            border: 2px solid #ced4da;
-        }
+    .score-board {
+      font-size: 1.3rem;
+      font-weight: bold;
+      background: #fec89a;
+      padding: 6px 16px;
+      border-radius: 20px;
+      color: #fff;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
 
-        .ingredients-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+    /* אזור הבישול המרכזי */
+    .cooking-zone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 20px;
+    }
 
-        .ingredient-btn {
-            background: white;
-            border: 2px solid #ced4da;
-            border-radius: 12px;
-            padding: 10px 5px;
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
+    .recipe-hint {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      background: #ece4db;
+      padding: 6px 14px;
+      border-radius: 12px;
+    }
 
-        .ingredient-btn:hover { transform: scale(1.05); background: #f8f9fa; }
-        .ingredient-btn:active { transform: scale(0.95); }
-        .ingredient-name { font-size: 0.85rem; color: #495057; font-weight: bold; }
+    /* המחבת הדינמית */
+    .pan-container {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      margin-bottom: 30px;
+    }
 
-        .actions { display: flex; gap: 15px; justify-content: center; }
+    .pan {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 35% 35%, #5c6180, var(--pan-color));
+      border-radius: 50%;
+      border: 8px solid #3d405b;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.1s ease;
+    }
 
-        button.action-btn {
-            padding: 12px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
+    .pan-handle {
+      position: absolute;
+      width: 120px;
+      height: 24px;
+      background: #3d405b;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%) rotate(90deg);
+      border-radius: 0 0 8px 8px;
+      transform-origin: top center;
+    }
 
-        #serve-btn { background-color: #2ed573; color: white; flex: 2; }
-        #clear-btn { background-color: #ff4757; color: white; flex: 1; }
-        .start-btn { background-color: #1e90ff; color: white; font-size: 1.4rem; padding: 12px 40px; border: none; border-radius: 10px; cursor: pointer;}
+    /* אפקט רטט בזמן טיגון */
+    .sizzling {
+      animation: sizzle-shake 0.1s infinite alternate;
+    }
 
-        /* מסך חנות */
-        .shop-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f1f2f6;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 12px;
-            border: 1px solid #dcdde1;
-        }
-        .shop-item-info { text-align: right; }
-        .shop-item-title { font-weight: bold; font-size: 1.1rem; }
-        .shop-item-desc { font-size: 0.85rem; color: #57606f; }
-        .buy-btn {
-            background-color: #ffa502;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .buy-btn:disabled { background-color: #ced4da; cursor: not-allowed; }
+    @keyframes sizzle-shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      100% { transform: translate(-1px, -1px) rotate(0.5deg); }
+    }
 
-        .hidden { display: none !important; }
-        .notice { font-size: 0.9rem; color: #7f8c8d; margin-top: -10px; margin-bottom: 15px; }
-    </style>
+    /* אוכל בתוך המחבת */
+    .food-in-pan {
+      font-size: 4.5rem;
+      transition: transform 0.3s ease;
+      position: absolute;
+      z-index: 2;
+    }
+
+    /* מד התקדמות הבישול */
+    .progress-container {
+      width: 80%;
+      height: 16px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      margin-top: 15px;
+      display: none;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #f4a261;
+      transition: width 0.1s linear;
+    }
+
+    /* סימון האזור המושלם על המד */
+    .perfect-zone {
+      position: absolute;
+      left: 60%;
+      width: 20%;
+      height: 100%;
+      background: rgba(76, 201, 240, 0.4);
+      border-left: 2px solid #fff;
+      border-right: 2px solid #fff;
+    }
+
+    .status-text {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 10px;
+      height: 24px;
+    }
+
+    /* כפתור פעולה עמוק */
+    .action-btn {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(76, 201, 240, 0.2);
+      display: none;
+      margin-top: 15px;
+      transform: scale(1);
+      transition: transform 0.1s ease;
+    }
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* מדף המרכיבים התחתון */
+    .shelf {
+      background: #faedcd;
+      padding: 20px;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -8px 20px rgba(0,0,0,0.04);
+      display: flex;
+      justify-content: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      justify-content: space-around;
+      align-items: center;
+      position: relative;
+    }
+
+    .shelf-title {
+      position: absolute;
+      top: -12px;
+      right: 30px;
+      background: #d4a373;
+      color: white;
+      padding: 2px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+    }
+
+    /* פריט גרירה */
+    .ingredient {
+      font-size: 3rem;
+      cursor: grab;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      touch-action: none; /* קריטי לעבודה חלקה במגע באייפד */
+      position: relative;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .ingredient:active {
+      cursor: grabbing;
+      transform: scale(1.1);
+      z-index: 100;
+    }
+  </style>
 </head>
 <body>
 
-<div id="game-container">
-    <h1>🍳 Cooking Dom: Pro Chef</h1>
-    
-    <div id="start-screen">
-        <p style="font-size: 1.1rem; line-height: 1.6;">
-            ברוכים הבאים למטבח המקצועי! <br>
-            הפעם הלקוחות חסרי סבלנות, והם דורשים את המנות שלהם <strong>בסדר המרכיבים המדויק</strong> שמופיע במתכון!
-        </p>
-        <button id="start-game-btn" class="start-btn">פתח את המסעדה 🚀</button>
+  <div class="game-card">
+    <div class="top-bar">
+      <div class="profile-area">
+        <div class="avatar">🦫</div>
+        <div class="stats">
+          <div class="hearts" id="hearts">❤️❤️❤️</div>
+        </div>
+      </div>
+      <div class="score-board">ניקוד: <span id="score">0</span></div>
     </div>
 
-    <div id="game-play" class="hidden">
-        <div class="stats-bar">
-            <div>📅 יום: <span id="day-counter">1</span></div>
-            <div>⏱️ זמן למשמרת: <span id="timer">60</span> ש'</div>
-            <div>💰 קופה: <span id="score">0</span></div>
+    <div class="cooking-zone">
+      <div class="recipe-hint" id="target-recipe">משימה: תכין ביצת עין! 🍳</div>
+      
+      <div class="pan-container" id="pan-target">
+        <div class="pan" id="main-pan">
+          <div class="food-in-pan" id="pan-food"></div>
         </div>
+        <div class="pan-handle"></div>
+      </div>
 
-        <div class="patience-container">
-            <div id="customer-patience" class="patience-bar"></div>
-        </div>
+      <div class="progress-container" id="progress-wrap">
+        <div class="perfect-zone"></div>
+        <div class="progress-bar" id="cook-progress"></div>
+      </div>
 
-        <div class="order-card">
-            <div class="order-title">הזמנה: <span id="customer-order-name">...</span></div>
-            <div class="recipe-preview" id="customer-recipe">...</div>
-        </div>
-        <div class="notice">⚠️ שימו לב: יש להניח את המרכיבים מימין לשמאל בדיוק לפי הסדר!</div>
-
-        <h3>🍽️ פס ההכנה (הצלחת שלך):</h3>
-        <div id="plate" class="kitchen-station"></div>
-
-        <h3>📦 מזווה מרכיבים:</h3>
-        <div class="ingredients-grid" id="ingredients-pool"></div>
-
-        <div class="actions">
-            <button id="clear-btn" class="action-btn">🗑️ פזר הכל</button>
-            <button id="serve-btn" class="action-btn">🛎️ הגש מנה!</button>
-        </div>
+      <div class="status-text" id="status-label">גרור מרכיב למחבת!</div>
+      <button class="action-btn" id="serve-btn" onclick="serveFood()">הגש מנה! ✨</button>
     </div>
 
-    <div id="shop-screen" class="hidden">
-        <h2>🏁 סוף יום העבודה!</h2>
-        <p style="font-size: 1.2rem;">הקופה הנוכחית שלך: <strong id="shop-coins" style="color: #ffa502;">0</strong> מטבעות</p>
-        
-        <h3>🛒 חנות שדרוגים למטבח:</h3>
-        
-        <div class="shop-item">
-            <div class="shop-item-info">
-                <div class="shop-item-title">🛋️ ספות נוחות ומזגן</div>
-                <div class="shop-item-desc">מוסיף עוד 5 שניות למד הסבלנות של כל לקוח.</div>
-            </div>
-            <button class="buy-btn" id="buy-patience" onclick="buyUpgrade('patience', 30)">קנה ב-30 💰</button>
-        </div>
-
-        <div class="shop-item">
-            <div class="shop-item-info">
-                <div class="shop-item-title">✨ תפריט פרימיום משודרג</div>
-                <div class="shop-item-desc">הלקוחות משלמים יותר! (+5 מטבעות בונוס לכל מנה).</div>
-            </div>
-            <button class="buy-btn" id="buy-tip" onclick="buyUpgrade('tip', 40)">קנה ב-40 💰</button>
-        </div>
-
-        <div class="shop-item">
-            <div class="shop-item-info">
-                <div class="shop-item-title">⏱️ שעון קיר דיגיטלי לשף</div>
-                <div class="shop-item-desc">מאריך את משמרת יום העבודה ב-10 שניות נוספות.</div>
-            </div>
-            <button class="buy-btn" id="buy-time" onclick="buyUpgrade('time', 50)">קנה ב-50 💰</button>
-        </div>
-
-        <button id="next-day-btn" class="start-btn" style="margin-top: 20px; background-color: #2ed573;">התחל את היום הבא ➡️</button>
+    <div class="shelf">
+      <div class="shelf-title">מזווה מרכיבים</div>
+      <div class="ingredient" id="ing-egg" data-type="egg">🥚</div>
+      <div class="ingredient" id="ing-bacon" data-type="bacon">🥓</div>
     </div>
-</div>
+  </div>
 
-<script>
-    // רשימת מרכיבים
-    const INGREDIENTS = {
-        bun: { emoji: '🍞', name: 'לחמנייה' },
-        meat: { emoji: '🥩', name: 'קציצה' },
-        cheese: { emoji: '🧀', name: 'גבינה' },
-        tomato: { emoji: '🍅', name: 'עגבנייה' },
-        lettuce: { emoji: '🥬', name: 'חסה' },
-        dough: { emoji: '🫓', name: 'בצק' },
-        sauce: { emoji: '🥫', name: 'רוטב' },
-        cucumber: { emoji: '🥒', name: 'מלפפון' }
-    };
-
-    // מתכונים בסדר קשיח (מלמטה למעלה / תחילת הכנה לסופה)
-    const RECIPES = [
-        { name: '🍔 בורגר קלאסי', ingredients: ['bun', 'meat', 'tomato', 'lettuce', 'bun'] },
-        { name: '🧀 צ\'יזבורגר כפול', ingredients: ['bun', 'meat', 'cheese', 'meat', 'cheese', 'bun'] },
-        { name: '🍕 פיצה מרגריטה', ingredients: ['dough', 'sauce', 'cheese'] },
-        { name: '🥗 סלט יווני', ingredients: ['lettuce', 'cucumber', 'tomato', 'cheese'] }
-    ];
-
-    // משתני מערכת המשחק והשדרוגים
-    let coins = 0;
-    let currentDay = 1;
-    let shiftDuration = 60; // אורך בסיסי של יום
-    let baseCustomerPatience = 20; // סבלנות בסיסית בשניות
-
-    // רמות שדרוגים
-    let upgrades = { patienceLevel: 0, tipLevel: 0, timeLevel: 0 };
-
-    // משתני ריצה של הסבב הנוכחי
-    let timeLeft = 0;
-    let currentOrder = null;
-    let currentCustomerPatienceLeft = 0;
-    let myPlate = [];
-    
-    // אינטרוולים (טיימרים)
-    let mainGameInterval = null;
-    let patienceInterval = null;
+  <script>
+    // משתני מצב המשחק
+    let score = 0;
+    let lives = 3;
+    let currentCookingType = null;
+    let cookInterval = null;
+    let progress = 0;
+    let currentTarget = 'egg'; // משימה נוכחית: egg או bacon
 
     // אלמנטים מה-DOM
-    const startScreen = document.getElementById('start-screen');
-    const gamePlay = document.getElementById('game-play');
-    const shopScreen = document.getElementById('shop-screen');
+    const pan = document.getElementById('main-pan');
+    const panFood = document.getElementById('pan-food');
+    const progressWrap = document.getElementById('progress-wrap');
+    const cookProgressBar = document.getElementById('cook-progress');
+    const statusLabel = document.getElementById('status-label');
+    const serveBtn = document.getElementById('serve-btn');
+    const scoreDisplay = document.getElementById('score');
+    const heartsDisplay = document.getElementById('hearts');
+    const targetRecipeDisplay = document.getElementById('target-recipe');
+    const panTarget = document.getElementById('pan-target');
+
+    // אתחול מערכת גרירה מבוססת Pointer Events (תואם פיקסל לאייפד ולעכבר כאחד)
+    const ingredients = document.querySelectorAll('.ingredient');
     
-    const dayCounterEl = document.getElementById('day-counter');
-    const timerEl = document.getElementById('timer');
-    const scoreEl = document.getElementById('score');
-    const patienceBar = document.getElementById('customer-patience');
-    const orderNameEl = document.getElementById('customer-order-name');
-    const recipeEl = document.getElementById('customer-recipe');
-    const plateEl = document.getElementById('plate');
-    const ingredientsPool = document.getElementById('ingredients-pool');
-    
-    // אתחול המזווה
-    function initIngredientsPool() {
-        ingredientsPool.innerHTML = '';
-        Object.keys(INGREDIENTS).forEach(key => {
-            const item = INGREDIENTS[key];
-            const btn = document.createElement('button');
-            btn.className = 'ingredient-btn';
-            btn.innerHTML = `<span>${item.emoji}</span><span class="ingredient-name">${item.name}</span>`;
-            btn.onclick = () => addToPlate(key);
-            ingredientsPool.appendChild(btn);
-        });
-    }
+    ingredients.forEach(ing => {
+      let startX, startY;
+      let initialLeft = 0, initialTop = 0;
 
-    // תחילת משחק / תחילת יום חדש
-    function startDay() {
-        shopScreen.classList.add('hidden');
-        startScreen.classList.add('hidden');
-        gamePlay.classList.remove('hidden');
+      ing.addEventListener('pointerdown', (e) => {
+        if (currentCookingType) return; // לא נותן לגרור אם יש משהו בבישול
         
-        myPlate = [];
-        updatePlateUI();
-        initIngredientsPool();
+        ing.setPointerCapture(e.pointerId);
+        startX = e.clientX;
+        startY = e.clientY;
         
-        dayCounterEl.innerText = currentDay;
-        scoreEl.innerText = coins;
+        ing.style.transition = 'none';
+      });
+
+      ing.addEventListener('pointermove', (e) => {
+        if (!ing.hasPointerCapture(e.pointerId)) return;
         
-        // חישוב זמנים לפי שדרוגים
-        timeLeft = shiftDuration + (upgrades.timeLevel * 10);
-        timerEl.innerText = timeLeft;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
         
-        generateNewOrder();
+        ing.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
 
-        // 1. טיימר המשמרת המרכזי
-        mainGameInterval = setInterval(() => {
-            timeLeft--;
-            timerEl.innerText = timeLeft;
-            if (timeLeft <= 0) {
-                endDay();
-            }
-        }, 1000);
-
-        // 2. טיימר סבלנות לקוחות
-        patienceInterval = setInterval(() => {
-            currentCustomerPatienceLeft--;
-            let maxPatience = baseCustomerPatience + (upgrades.patienceLevel * 5);
-            let percentage = (currentCustomerPatienceLeft / maxPatience) * 100;
-            
-            // עדכון גרפי של הבר
-            patienceBar.style.width = percentage + '%';
-            if (percentage > 50) patienceBar.style.backgroundColor = '#2ed573';
-            else if (percentage > 25) patienceBar.style.backgroundColor = '#ffa502';
-            else patienceBar.style.backgroundColor = '#ff4757';
-
-            if (currentCustomerPatienceLeft <= 0) {
-                // הלקוח איבד סבלנות ועזב
-                alert('😤 הלקוח התעצבן ועזב כי לקח לך יותר מדי זמן! (קנס: 5- מטבעות)');
-                coins = Math.max(0, coins - 5);
-                scoreEl.innerText = coins;
-                myPlate = [];
-                updatePlateUI();
-                generateNewOrder();
-            }
-        }, 1000);
-    }
-
-    // יצירת הזמנה חדשה
-    function generateNewOrder() {
-        const randomIndex = Math.floor(Math.random() * RECIPES.length);
-        currentOrder = RECIPES[randomIndex];
-        orderNameEl.innerText = currentOrder.name;
+      ing.addEventListener('pointerup', (e) => {
+        if (!ing.hasPointerCapture(e.pointerId)) return;
+        ing.releasePointerCapture(e.pointerId);
         
-        // הצגת סדר המרכיבים עם חצים ברורים
-        const recipeEmojis = currentOrder.ingredients.map(key => INGREDIENTS[key].emoji).join(' ➡️ ');
-        recipeEl.innerHTML = recipeEmojis;
+        ing.style.transition = 'transform 0.2s ease';
         
-        // אתחול סבלנות הלקוח
-        currentCustomerPatienceLeft = baseCustomerPatience + (upgrades.patienceLevel * 5);
-        patienceBar.style.width = '100%';
-        patienceBar.style.backgroundColor = '#2ed573';
-    }
+        // בדיקת התנגשות/חפיפה עם המחבת
+        const panRect = panTarget.getBoundingClientRect();
+        const ingRect = ing.getBoundingClientRect();
+        
+        const isOverlapping = !(
+          ingRect.right < panRect.left || 
+          ingRect.left > panRect.right || 
+          ingRect.bottom < panRect.top || 
+          ingRect.top > panRect.bottom
+        );
 
-    function addToPlate(ingredientKey) {
-        myPlate.push(ingredientKey);
-        updatePlateUI();
-    }
-
-    function updatePlateUI() {
-        if (myPlate.length === 0) {
-            plateEl.innerHTML = '<span style="color:#a4b0be; font-size: 1.1rem;">הצלחת ריקה. לחץ על מרכיבים!</span>';
-            return;
+        if (isOverlapping) {
+          startCooking(ing.dataset.type);
         }
-        // מציג את המרכיבים בסדר שהונחו (מימין לשמאל)
-        plateEl.innerHTML = myPlate.map(key => INGREDIENTS[key].emoji).join(' ➡️ ');
+        
+        // החזרת המרכיב למדף
+        ing.style.transform = 'translate(0px, 0px)';
+      });
+    });
+
+    // פונקציית תחילת בישול
+    function startCooking(type) {
+      currentCookingType = type;
+      progress = 0;
+      
+      // שינוי המראה במחבת לפי המרכיב שנזרק
+      panFood.innerText = type === 'egg' ? '🥚' : '🥓';
+      panFood.style.transform = 'scale(1)';
+      
+      pan.classList.add('sizzling');
+      progressWrap.style.display = 'block';
+      serveBtn.style.display = 'block';
+      statusLabel.innerText = 'מבשל... שים לב למד!';
+      statusLabel.style.color = 'var(--text-color)';
+
+      // לולאת התקדמות הטיגון
+      cookInterval = setInterval(() => {
+        progress += 1.5;
+        if (progress > 100) progress = 100;
+        
+        cookProgressBar.style.width = progress + '%';
+
+        // שינוי מצב ויזואלי של האוכל על סמך הזמן במחבת
+        if (progress >= 60 && progress <= 80) {
+          statusLabel.innerText = 'מושלם! הגש עכשיו! ✨';
+          statusLabel.style.color = '#2a9d8f';
+          panFood.innerText = type === 'egg' ? '🍳' : '🥓'; // הופך למוכן
+        } else if (progress > 80) {
+          statusLabel.innerText = 'אוי לא, נשרף! 😭';
+          statusLabel.style.color = '#e63946';
+          panFood.innerText = '💀'; // נשרף
+          panFood.style.transform = 'scale(0.9)';
+        }
+      }, 100);
     }
 
-    // ניקוי צלחת
-    document.getElementById('clear-btn').onclick = () => {
-        myPlate = [];
-        updatePlateUI();
-    };
-
-    // הגשת מנה ובדיקת סדר קשיח
-    document.getElementById('serve-btn').onclick = () => {
-        if (!currentOrder) return;
-
-        // בדיקה: האם האורך שווה והאם כל איבר זהה בדיוק באותו אינדקס (בדיקת סדר קשיח!)
-        const isCorrectSequence = myPlate.length === currentOrder.ingredients.length &&
-                                  myPlate.every((val, index) => val === currentOrder.ingredients[index]);
-
-        if (isCorrectSequence) {
-            let baseReward = 10;
-            let bonus = upgrades.tipLevel * 5;
-            let totalEarned = baseReward + bonus;
-            
-            coins += totalEarned;
-            scoreEl.innerText = coins;
-            
-            alert(`🤩 מנה מושלמת ובסדר הנכון! הרווחת ${totalEarned} מטבעות!`);
-            myPlate = [];
-            updatePlateUI();
-            generateNewOrder();
+    // הגשת המנה בלחיצה
+    function serveFood() {
+      clearInterval(cookInterval);
+      pan.classList.remove('sizzling');
+      
+      // בדיקה אם המרכיב תואם למשימה ואם בושול בטווח הנכון
+      if (currentCookingType === currentTarget && progress >= 60 && progress <= 80) {
+        score += 10;
+        scoreDisplay.innerText = score;
+        alert('כל הכבוד! מנה מושלמת 🌟 +10 נקודות');
+        generateNextRecipe();
+      } else {
+        lives--;
+        updateHearts();
+        if (progress > 80) {
+          alert('הגשת אוכל שרוף! השף קפיברה עצבני 😡');
+        } else if (progress < 60) {
+          alert('זה נא! האוכל לא מוכן מספיק 🥩');
         } else {
-            alert('❌ אופס! המרכיבים לא נכונים או שלא שמת אותם בסדר הנכון! בדוק את המתכון שוב.');
+          alert('זה לא המרכיב שהוזמן! תסתכל על המשימה 🤦‍♂️');
         }
-    };
-
-    // סיום יום עבודה ומעבר לחנות
-    function endDay() {
-        clearInterval(mainGameInterval);
-        clearInterval(patienceInterval);
         
-        gamePlay.classList.add('hidden');
-        shopScreen.classList.remove('hidden');
-        
-        document.getElementById('shop-coins').innerText = coins;
-        updateShopButtons();
-    }
-
-    // מנגנון חנות השדרוגים
-    function buyUpgrade(type, cost) {
-        if (coins >= cost) {
-            coins -= cost;
-            document.getElementById('shop-coins').innerText = coins;
-            
-            if (type === 'patience') upgrades.patienceLevel++;
-            if (type === 'tip') upgrades.tipLevel++;
-            if (type === 'time') upgrades.timeLevel++;
-            
-            alert('🛍️ השדרוג נרכש בהצלחה והתווסף למטבח שלך!');
-            updateShopButtons();
-        } else {
-            alert('💸 אין לך מספיק מטבעות בקופה!');
+        if (lives <= 0) {
+          alert('המשחק נגמר! הניקוד הסופי שלך: ' + score);
+          score = 0;
+          lives = 3;
+          scoreDisplay.innerText = score;
+          updateHearts();
+          generateNextRecipe();
         }
+      }
+
+      // איפוס המחבת
+      resetPan();
     }
 
-    // עדכון כפתורי קנייה בחנות (מניעת קנייה אם אין כסף)
-    function updateShopButtons() {
-        document.getElementById('buy-patience').disabled = (coins < 30);
-        document.getElementById('buy-tip').disabled = (coins < 40);
-        document.getElementById('buy-time').disabled = (coins < 50);
+    function resetPan() {
+      currentCookingType = null;
+      panFood.innerText = '';
+      progressWrap.style.display = 'none';
+      serveBtn.style.display = 'none';
+      cookProgressBar.style.width = '0%';
+      statusLabel.innerText = 'גרור מרכיב למחבת!';
+      statusLabel.style.color = 'var(--text-color)';
     }
 
-    // כפתורי מעבר מסכים
-    document.getElementById('start-game-btn').onclick = startDay;
-    document.getElementById('next-day-btn').onclick = () => {
-        currentDay++;
-        startDay();
-    };
-</script>
+    function updateHearts() {
+      let heartStr = '';
+      for (let i = 0; i < lives; i++) heartStr += '❤️';
+      heartsDisplay.innerText = heartStr || '💀';
+    }
 
+    function generateNextRecipe() {
+      currentTarget = Math.random() > 0.5 ? 'egg' : 'bacon';
+      targetRecipeDisplay.innerText = currentTarget === 'egg' ? 'משימה: תכין ביצת עין! 🍳' : 'משימה: תטגן קריספי בייקון! 🥓';
+    }
+  </script>
 </body>
 </html>
